@@ -1,0 +1,32 @@
+package com.ilkdeneme.demo.student;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
+
+import org.aspectj.weaver.reflect.ArgNameFinder;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class StudentConfig {
+	@Bean
+	CommandLineRunner commandLineRunner(StudentRepository repository) {
+		return args -> {
+			Student mariam = new Student(
+					"Mariam", 
+					"Mariam@gmail.com",
+					LocalDate.of(1999, Month.JANUARY, 22)
+					//age is erased
+					); 
+			Student mustafa = new Student(
+					"Mustafa", 
+					"Mustafa@gmail.com",
+					LocalDate.of(1996, Month.MARCH, 8)
+					// age was erased
+					);
+			repository.saveAll(List.of(mariam,mustafa));
+		};
+	}
+}
