@@ -1,0 +1,233 @@
+import java.awt.EventQueue;
+import java.util.ArrayList;
+
+import javax.swing.JDialog;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+import java.awt.Color;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.JSeparator;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+public class CalisanEkrani extends JDialog {
+	DefaultTableModel model;
+	SirketCalisanlari islemlers = new SirketCalisanlari();
+	private JTable calisanTablosu;
+	private JTextField aramaCubugu;
+	private JTextField isimAlani;
+	private JTextField soyisimAlani;
+	private JTextField departAlani;
+	private JTextField maasAlani;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					CalisanEkrani dialog = new CalisanEkrani();
+					dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+					dialog.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	public void calisanGoruntule() {
+		model.setRowCount(0); // satırlarımız sürekli boş tutar.(Calisan ekle cikar islemleri icin)
+		
+		ArrayList<Calisan> calisan_listesi= new ArrayList<>();
+		calisan_listesi = islemlers.calisanlariGetir();///////////// SriketClisanları classından.
+		if(calisan_listesi != null) {
+			for(Calisan calisan : calisan_listesi) {
+				Object[] eklenecek = {calisan.getId(),calisan.getAd(),calisan.getSoyad(),calisan.getDepartment(),calisan.getMaas()};
+				// userın oluşturduğu classtan(Datatype) gelen değerleri object arrayi olarak alıyoruz.
+				model.addRow(eklenecek);
+			}
+		}
+	}
+	//////////////////////////////////////////////////////////////////////////
+	public void dinamikArama(String aranilan_text){
+		TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(model);
+		calisanTablosu.setRowSorter(tr);
+		
+		tr.setRowFilter(RowFilter.regexFilter(aranilan_text));
+	}
+//////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Create the dialog.
+	 * @param b 
+	 * @param actionListener 
+	 */
+	//@SuppressWarnings("serial")
+	public CalisanEkrani() {
+		getContentPane().setBackground(new Color(240, 240, 240));
+		setBounds(100, 100, 596, 470);
+		getContentPane().setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		
+		scrollPane.setBounds(44, 190, 502, 233);
+		getContentPane().add(scrollPane);
+		
+		calisanTablosu = new JTable();
+		calisanTablosu.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int selectedrow = calisanTablosu.getSelectedRow();
+				
+				isimAlani.setText(model.getValueAt(selectedrow, 1).toString());
+				soyisimAlani.setText(model.getValueAt(selectedrow,2).toString());
+				departAlani.setText(model.getValueAt(selectedrow, 3).toString());
+				maasAlani.setText(model.getValueAt(selectedrow,4).toString());
+			}
+		});
+		calisanTablosu.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"Id", "Ad", "Soyad", "Departman", "Maas"
+			}
+		));
+		scrollPane.setViewportView(calisanTablosu);
+		
+		aramaCubugu = new JTextField();
+		aramaCubugu.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) { // event key release
+				String aranilan = aramaCubugu.getText();
+				
+				dinamikArama(aranilan);
+				
+			}
+		});
+		aramaCubugu.setBounds(44, 10, 502, 19);
+		getContentPane().add(aramaCubugu);
+		aramaCubugu.setColumns(10);
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(44, 39, 502, 19);
+		getContentPane().add(separator);
+		
+		JLabel LisimAlani = new JLabel("Ad : ");
+		LisimAlani.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		LisimAlani.setBounds(10, 56, 73, 13);
+		getContentPane().add(LisimAlani);
+		
+		JLabel LsoyisimAlani = new JLabel("Soyad :");
+		LsoyisimAlani.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		LsoyisimAlani.setBounds(10, 79, 73, 13);
+		getContentPane().add(LsoyisimAlani);
+		
+		JLabel LdepartAlani = new JLabel("Departman :");
+		LdepartAlani.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		LdepartAlani.setBounds(10, 102, 73, 13);
+		getContentPane().add(LdepartAlani);
+		
+		JLabel LmaasAlani = new JLabel("Maaş :");
+		LmaasAlani.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		LmaasAlani.setBounds(10, 125, 73, 13);
+		getContentPane().add(LmaasAlani);
+		
+		isimAlani = new JTextField();
+		isimAlani.setBounds(93, 53, 256, 19);
+		getContentPane().add(isimAlani);
+		isimAlani.setColumns(10);
+		
+		soyisimAlani = new JTextField();
+		soyisimAlani.setBounds(93, 76, 256, 19);
+		getContentPane().add(soyisimAlani);
+		soyisimAlani.setColumns(10);
+		
+		departAlani = new JTextField();
+		departAlani.setBounds(93, 99, 256, 19);
+		getContentPane().add(departAlani);
+		departAlani.setColumns(10);
+		
+		maasAlani = new JTextField();
+		maasAlani.setBounds(93, 122, 256, 19);
+		getContentPane().add(maasAlani);
+		maasAlani.setColumns(10);
+		/////////////////////////////////////////////////////////////
+		JLabel uyariField = new JLabel("");
+		uyariField.setForeground(new Color(255, 0, 0));
+		uyariField.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		uyariField.setBounds(38, 167, 497, 13);
+		getContentPane().add(uyariField);
+		
+		JButton btnNewButton = new JButton("Yeni Çalışan Ekle");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				uyariField.setText("");
+				
+				String ad = isimAlani.getText();
+				String soyad = soyisimAlani.getText();
+				String departman = departAlani.getText();
+				String maaString = maasAlani.getText();
+				
+				islemlers.calisanEkle(ad,soyad,departman,maaString);
+				calisanGoruntule();
+				uyariField.setText("Yeni Çalışan Başarıyla Eklendi.");
+				
+			}
+			///////////////////////////////////////////////////////
+		});
+		
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnNewButton.setBounds(394, 52, 141, 21);
+		getContentPane().add(btnNewButton);
+		
+		JButton calisanGüncelle = new JButton("Çalışan Güncelle");
+		calisanGüncelle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String ad = isimAlani.getText();
+				String soyad = soyisimAlani.getText();
+				String department = departAlani.getText();
+				String maas = maasAlani.getText();
+				
+				int selectedRow = calisanTablosu.getSelectedRow();
+				
+				if(selectedRow == -1) {
+					if(model.getRowCount() == 0) {
+						uyariField.setText("Çalışan Tablosu şu anda boş ");
+					}
+					else {
+						uyariField.setText("Lütfen güncellenecek çalışanı seçin.");
+					}
+				}else {
+					int id = (int) model.getValueAt(selectedRow, 0);
+					
+					islemlers.calisanGuncelle(id,ad,soyad,department,maas);
+					calisanGoruntule();
+					uyariField.setText("Calisan basariyla güncellendi.");
+				}
+				
+			}
+		});
+		calisanGüncelle.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		calisanGüncelle.setBounds(394, 99, 141, 21);
+		getContentPane().add(calisanGüncelle);
+		
+		
+		
+		
+		model = (DefaultTableModel) calisanTablosu.getModel();
+		calisanGoruntule();
+
+	}
+}

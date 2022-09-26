@@ -1,0 +1,96 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import java.awt.Window.Type;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JPasswordField;
+
+public class GirisEkrani extends JFrame {
+
+	SirketCalisanlari islemler = new SirketCalisanlari();
+	private JTextField kullanıcıAdıAlanı;
+	private JPasswordField passwordAlani;
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GirisEkrani frame = new GirisEkrani();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public GirisEkrani() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 498, 347);
+		getContentPane().setLayout(null);
+		
+		kullanıcıAdıAlanı = new JTextField();
+		kullanıcıAdıAlanı.setBounds(225, 113, 171, 19);
+		getContentPane().add(kullanıcıAdıAlanı);
+		kullanıcıAdıAlanı.setColumns(10);
+		
+		JLabel kullaniciAdi = new JLabel("Kullanıcı adı : ");
+		kullaniciAdi.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		kullaniciAdi.setBounds(104, 113, 101, 19);
+		getContentPane().add(kullaniciAdi);
+		
+		JLabel parolaAlani = new JLabel("Parola : ");
+		parolaAlani.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		parolaAlani.setBounds(104, 152, 101, 13);
+		getContentPane().add(parolaAlani);
+		
+		JLabel uyariAlani = new JLabel("");
+		uyariAlani.setForeground(new Color(255, 0, 0));
+		uyariAlani.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		uyariAlani.setBounds(115, 196, 281, 13);
+		getContentPane().add(uyariAlani);
+		//////////////////////////////////////////////////////////////////
+		JButton girisButonu = new JButton("Giriş Yap");
+		girisButonu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			uyariAlani.setText("");
+			String kullanici_adi = kullanıcıAdıAlanı.getText();
+			String parola = new String(passwordAlani.getPassword());
+			/////////////////////////////////////////////////////
+			boolean giris_basarisi = islemler.girisYap(kullanici_adi,parola);
+			/////////////////////////////////////////////////////
+			if(giris_basarisi == true) {
+				uyariAlani.setText("Giris basarili.....");
+				CalisanEkrani calisanEkrani = new CalisanEkrani();
+				setVisible(false);
+				System.exit(0);
+				calisanEkrani.setVisible(true);
+				
+				
+			}else {
+				uyariAlani.setText("Giris basarisiz... Lutfen tekrar giris yapiniz.....");
+			}
+		}
+			
+		});
+		////////////////////////////////////////////////////////////////////////////////////////
+		girisButonu.setBounds(181, 234, 123, 21);
+		getContentPane().add(girisButonu);
+		
+		passwordAlani = new JPasswordField();
+		passwordAlani.setBounds(225, 151, 171, 19);
+		getContentPane().add(passwordAlani);
+	}
+}
